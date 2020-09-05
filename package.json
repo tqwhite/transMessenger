@@ -1,0 +1,19 @@
+{
+  "name": "trans-messenger",
+  "version": "1.0.0",
+  "description": "operating framework for transmission of messages",
+  "main": "startAll.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/tqwhite/transMessenger.git"
+  },
+  "author": "TQ White II",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tqwhite/transMessenger/issues"
+  },
+  "homepage": "https://github.com/tqwhite/transMessenger#readme"
+}
