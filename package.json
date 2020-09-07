@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/tqwhite/transMessenger/issues"
   },
-  "homepage": "https://github.com/tqwhite/transMessenger#readme"
+  "homepage": "https://github.com/tqwhite/transMessenger#readme",
+  "dependencies": {
+    "asynchronous-pipe-plus": "^1.0.1",
+    "qtools-config-file-processor": "^1.0.5",
+    "qtools-functional-library": "^1.0.8",
+    "qtools-parse-command-line": "^1.0.5",
+    "twilio": "^3.49.1"
+  }
 }

@@ -1,0 +1,11 @@
+{
+  "name": "twilio-text",
+  "version": "1.0.0",
+  "description": "take a data structure and send a text message using twilio",
+  "main": "twilio-text.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "TQ White II",
+  "license": "ISC"
+}

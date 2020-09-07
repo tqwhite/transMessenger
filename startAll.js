@@ -1,40 +1,73 @@
 'use strict';
-// const qtoolsGen = require('qtools');
-// const qtools = new qtoolsGen(module, { updatePrototypes: true });
+
+console.clear();
+console.log(
+	`\n=-=============   console.clear()()  ========================= [startAll.js.]\n`
+);
 
 const qtLib = require('qtools-functional-library');
-// const commandLineParser = require('qtools-parse-command-line');
-// const commandLineParameters = commandLineParser.getParameters();
+const asynchronousPipe = new require('asynchronous-pipe-plus')();
 
-// const configFileProcessor = require('qtools-config-file-processor');
+//INITIAL PARAMETERS ============================================================
 
+const commandLineParser = require('qtools-parse-command-line');
+const commandLineParameters = commandLineParser.getParameters();
 
-/*
-ln -s /Users/tqwhite/node_modules/qtools-config-file-processor qtools-config-file-processor
-ln -s /Users/tqwhite/node_modules/qtools-parse-command-line qtools-parse-command-line
-ln -s /Users/tqwhite/node_modules/qtools-functional-library qtools-functional-library
-NOTE: don't forget to update package.js dependendies for linked libraries
-*/
+const systemConfig = require('./lib/config-initializer.js')({
+	commandLineParameters,
+	environment: process.env
+});
 
-console.log(__dirname);
+systemConfig ||
+	console.error(`ERROR: No config file found. Quitting`) ||
+	process.exit(1);
 
 //START OF moduleFunction() ============================================================
 
-const moduleFunction = function(args={}) {
+var moduleFunction = function(args) {
+	const { commandLineParameters, systemConfig } = args;
 
-	const workingFunctionActual=localArgs=>operatingArgs=>{
+	const config = systemConfig.getElement(module);
+	const { log } = config;
+	const { type = [] } = commandLineParameters.values;
 	
-		return "hello";
-	
+	const messageSender = require('./lib/senders/twilio-text')({
+		systemConfig
+	});
+
+	if (type.qtPop() == 'twilio-text') {
+		const pipeRunner = asynchronousPipe.asynchronousPipe;
+		const taskList = asynchronousPipe.taskListPlus();
+
+		taskList.push((args, next) => {
+			messageSender.sendMessageList(
+				commandLineParameters.values,
+				(err, sendersResult) => {
+					next(err, { ...args, sendersResult });
+				}
+			);
+		});
+		const initialData = {};
+		pipeRunner(taskList.getList(), initialData, (err, args) => {
+			const { sendersResult } = args;
+			const { sentStatus, errorList, processList } = sendersResult;
+
+			if (err) {
+				log(
+					`ERRORS OCCURRED: \n\t${errorList.map(item => item.err).join('\n\t')}`
+				);
+			}
+			log(sentStatus);
+		});
+	} else {
+		//start loop
+		//start web interface
+		log('no messages sent yet');
 	}
 	
-	this.workingFunction=workingFunctionActual(Object.assign({}, args));
-
-	return this;
 };
 
 //END OF moduleFunction() ============================================================
 
-module.exports = moduleFunction;
-//module.exports = new moduleFunction();
+moduleFunction({ commandLineParameters, systemConfig });
 
