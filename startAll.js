@@ -5,8 +5,12 @@ console.log(
 	`\n=-=============   console.clear()()  ========================= [startAll.js.]\n`
 );
 
+// --type=twilio-text --message=TQ's+New+Trans+Messenger+says:+HELLO' --phoneNumbers=7087630100
+
+
 const qtLib = require('qtools-functional-library');
-const asynchronousPipe = new require('asynchronous-pipe-plus')();
+const path = require('path');
+const messageProcessObjectGen=require('./lib/message-process-object');
 
 //INITIAL PARAMETERS ============================================================
 
@@ -26,44 +30,36 @@ systemConfig ||
 
 var moduleFunction = function(args) {
 	const { commandLineParameters, systemConfig } = args;
+	const config = systemConfig.getElement(module)('.');
 
-	const config = systemConfig.getElement(module);
-	const { log } = config;
-	const { type = [] } = commandLineParameters.values;
+	const { _log: qlog, workers, components } = config;
+
+	const codeRoot = path.dirname(module.filename);
+
+
+//MAIN FUNCTION ============================================================
+
+	const buildWorker = (({
+		commandLineParameters,
+		systemConfig,
+		codeRoot
+	}) => worker => {
 	
-	const messageSender = require('./lib/senders/twilio-text')({
-		systemConfig
-	});
-
-	if (type.qtPop() == 'twilio-text') {
-		const pipeRunner = asynchronousPipe.asynchronousPipe;
-		const taskList = asynchronousPipe.taskListPlus();
-
-		taskList.push((args, next) => {
-			messageSender.sendMessageList(
-				commandLineParameters.values,
-				(err, sendersResult) => {
-					next(err, { ...args, sendersResult });
-				}
-			);
+		const workerDefinition=systemConfig.getElement(worker.configName)('.')
+	
+		require(path.join(codeRoot, workerDefinition.engine))({
+			commandLineParameters,
+			systemConfig,
+			worker,
+			codeRoot,
+			messageProcessObjectGen
 		});
-		const initialData = {};
-		pipeRunner(taskList.getList(), initialData, (err, args) => {
-			const { sendersResult } = args;
-			const { sentStatus, errorList, processList } = sendersResult;
+	})({ commandLineParameters, systemConfig, codeRoot });
+	
+//initialization ============================================================
 
-			if (err) {
-				log(
-					`ERRORS OCCURRED: \n\t${errorList.map(item => item.err).join('\n\t')}`
-				);
-			}
-			log(sentStatus);
-		});
-	} else {
-		//start loop
-		//start web interface
-		log('no messages sent yet');
-	}
+
+	workers.forEach(buildWorker);
 	
 };
 
