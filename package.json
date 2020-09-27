@@ -18,6 +18,7 @@
   "homepage": "https://github.com/tqwhite/transMessenger#readme",
   "dependencies": {
     "asynchronous-pipe-plus": "^1.0.1",
+    "axios": "^0.20.0",
     "qtools-config-file-processor": "^1.0.5",
     "qtools-functional-library": "^1.0.8",
     "qtools-parse-command-line": "^1.0.5",

@@ -31,7 +31,7 @@ var moduleFunction = function(args) {
 	const { commandLineParameters, systemConfig } = args;
 	const config = systemConfig.getElement(module)('.');
 
-	const { _log: qlog, workers, components } = config;
+	const { _log: qlog, jobInstances, components } = config;
 
 	const codeRoot = path.dirname(module.filename);
 
@@ -42,14 +42,14 @@ var moduleFunction = function(args) {
 		commandLineParameters,
 		systemConfig,
 		codeRoot
-	}) => worker => {
+	}) => jobConfig => {
 	
-		const workerDefinition=systemConfig.getElement(worker.configName)('.')
+		const workerDefinition=systemConfig.getElement(jobConfig.configName)('.')
 	
 		require(path.join(codeRoot, workerDefinition.executor))({
 			commandLineParameters,
 			systemConfig,
-			worker,
+			jobConfig,
 			codeRoot,
 			messageProcessObjectGen
 		});
@@ -58,7 +58,7 @@ var moduleFunction = function(args) {
 //initialization ============================================================
 
 
-	workers.forEach(buildWorker);
+	jobInstances.forEach(buildWorker);
 	
 };
 
