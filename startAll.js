@@ -5,7 +5,6 @@ console.log(
 	`\n=-=============   console.clear()()  ========================= [startAll.js.]\n`
 );
 
-// --type=twilio-text --message=TQ's+New+Trans+Messenger+says:+HELLO' --phoneNumbers=7087630100
 
 
 const qtLib = require('qtools-functional-library');
@@ -47,7 +46,7 @@ var moduleFunction = function(args) {
 	
 		const workerDefinition=systemConfig.getElement(worker.configName)('.')
 	
-		require(path.join(codeRoot, workerDefinition.engine))({
+		require(path.join(codeRoot, workerDefinition.executor))({
 			commandLineParameters,
 			systemConfig,
 			worker,
