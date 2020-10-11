@@ -44,6 +44,11 @@ var moduleFunction = function(args) {
 		codeRoot
 	}) => jobConfig => {
 	
+jobConfig.qtDump({label:"jobConfig"});
+
+process.exit();
+
+
 		const workerDefinition=systemConfig.getElement(jobConfig.configName)('.')
 	
 		require(path.join(codeRoot, workerDefinition.executor))({
